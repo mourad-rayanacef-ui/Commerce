@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { api } from '../services/api';
+import  api  from '../services/api';
 
 export const useSalesData = (days = 30) => {
   const [data, setData] = useState(null);

@@ -1,17 +1,17 @@
-import React from 'react';
-import { SalesChart } from '../components/Dashboard/SalesChart';
-import { TopProducts } from '../components/Dashboard/TopProducts';
-import { KPICards } from '../components/Dashboard/KPICards';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
-export const DashboardPage = () => {
+const DashboardPage = () => {
+  const { user, token } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+
   return (
     <div className="dashboard-page">
-      <h1>Sales Dashboard</h1>
-      <KPICards />
-      <div className="dashboard-grid">
-        <SalesChart />
-        <TopProducts />
-      </div>
+      <h1>Admin Dashboard</h1>
+      <p>Welcome, {user?.username}!</p>
+      {/* Add dashboard content here */}
     </div>
   );
 };
+
+export default DashboardPage;

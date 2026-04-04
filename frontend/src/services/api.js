@@ -141,3 +141,14 @@ export const forecastAPI = {
     fetch(`${API_BASE_URL}/forecast/demand`)
       .then(r => r.json())
 };
+const api = {
+  authAPI,
+  productsAPI,
+  ordersAPI,
+  chatAPI,
+  salesAPI,
+  inventoryAPI,
+  forecastAPI
+};
+
+export default api;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { api } from '../../services/api';
+import  api  from '../../services/api';
 
 export const ForecastControls = ({ onForecastUpdate, onProductSelect }) => {
   const [windowSize, setWindowSize] = useState(7);

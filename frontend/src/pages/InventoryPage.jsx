@@ -1,13 +1,17 @@
-import React from 'react';
-import { InventoryTable } from '../components/Inventory/InventoryTable';
-import { LowStockAlert } from '../components/Inventory/LowStockAlert';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
-export const InventoryPage = () => {
+const InventoryPage = () => {
+  const { user, token } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+
   return (
     <div className="inventory-page">
       <h1>Inventory Management</h1>
-      <LowStockAlert />
-      <InventoryTable />
+      <p>Welcome, {user?.username}!</p>
+      {/* Add inventory content here */}
     </div>
   );
 };
+
+export default InventoryPage;
