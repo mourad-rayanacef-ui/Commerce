@@ -1,4 +1,3 @@
-// frontend/src/components/Store/ProductCard.jsx
 import React from 'react';
 import '../../styles/product-card.css';
 
@@ -6,14 +5,19 @@ const ProductCard = ({ product, onAddToCart }) => {
   return (
     <div className="product-card">
       <div className="product-image">
-        <img src={`https://via.placeholder.com/200?text=${product.name}`} alt={product.name} />
+        <img 
+          src={`https://via.placeholder.com/200?text=${encodeURIComponent(product.name)}`} 
+          alt={product.name}
+        />
       </div>
       <div className="product-content">
-        <h3>{product.name}</h3>
-        <p className="description">{product.description}</p>
+        <h3 className="product-name">{product.name}</h3>
+        <p className="product-description">{product.description}</p>
         <div className="product-footer">
-          <span className="price">${product.price}</span>
-          <span className="stock">Stock: {product.stock}</span>
+          <span className="product-price">${product.price.toFixed(2)}</span>
+          <span className={`product-stock ${product.stock > 0 ? 'in-stock' : 'out-stock'}`}>
+            {product.stock > 0 ? `In Stock (${product.stock})` : 'Out of Stock'}
+          </span>
         </div>
         <button
           onClick={onAddToCart}

@@ -40,6 +40,9 @@
   border-radius: 4px;
   transition: background-color 0.3s;
   font-size: 0.95rem;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .nav-link:hover {
@@ -48,35 +51,10 @@
 
 .cart-link {
   background-color: rgba(255, 255, 255, 0.3);
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  position: relative;
-}
-
-.cart-link::after {
-  content: attr(data-count);
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #ff4444;
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
 }
 
 .chat-btn {
   background-color: #ff6b6b;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  color: white;
-  font-size: 0.95rem;
 }
 
 .chat-btn:hover {
@@ -115,24 +93,4 @@
 
 .logout-btn:hover {
   background-color: #dd0000;
-}
-
-@media (max-width: 768px) {
-  .navbar-container {
-    padding: 0 1rem;
-  }
-
-  .navbar-menu {
-    gap: 0.5rem;
-    font-size: 0.9rem;
-  }
-
-  .nav-link {
-    padding: 0.4rem 0.8rem;
-  }
-
-  .user-menu {
-    margin-left: 0.5rem;
-    padding-left: 0.5rem;
-  }
 }

@@ -18,7 +18,7 @@ const Navbar = ({ onChatClick }) => {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
-          🛍️ Commerce Dashboard
+          🛍️ Commerce
         </Link>
 
         <div className="navbar-menu">
@@ -31,10 +31,9 @@ const Navbar = ({ onChatClick }) => {
             <>
               {user.role === 'admin' ? (
                 <>
-                  <Link to="/admin/dashboard" className="nav-link">Admin Dashboard</Link>
+                  <Link to="/admin/dashboard" className="nav-link">Dashboard</Link>
                   <Link to="/admin/inventory" className="nav-link">Inventory</Link>
                   <Link to="/admin/forecast" className="nav-link">Forecast</Link>
-                  <Link to="/admin/products" className="nav-link">Products</Link>
                 </>
               ) : (
                 <>

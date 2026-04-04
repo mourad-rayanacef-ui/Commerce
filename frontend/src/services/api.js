@@ -110,7 +110,7 @@ export const chatAPI = {
     }).then(r => r.json())
 };
 
-// Sales API calls (existing)
+// Sales API calls
 export const salesAPI = {
   daily: () =>
     fetch(`${API_BASE_URL}/sales/daily`)
@@ -121,7 +121,7 @@ export const salesAPI = {
       .then(r => r.json())
 };
 
-// Inventory API calls (existing)
+// Inventory API calls
 export const inventoryAPI = {
   status: () =>
     fetch(`${API_BASE_URL}/inventory/status`)
@@ -135,13 +135,9 @@ export const inventoryAPI = {
     }).then(r => r.json())
 };
 
-// Forecast API calls (existing)
+// Forecast API calls
 export const forecastAPI = {
   demand: () =>
     fetch(`${API_BASE_URL}/forecast/demand`)
-      .then(r => r.json()),
-
-  reorderSuggestions: () =>
-    fetch(`${API_BASE_URL}/forecast/reorder-suggestions`)
       .then(r => r.json())
 };
