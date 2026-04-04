@@ -1,53 +1,90 @@
+# backend/app/schemas.py
 from pydantic import BaseModel
-from datetime import datetime
 from typing import Optional, List
+from datetime import datetime
 
-class ProductBase(BaseModel):
+# Authentication Schemas
+class UserCreate(BaseModel):
+    email: str
+    username: str
+    password: str
+    full_name: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    username: str
+    full_name: str
+    role: str
+    is_active: bool
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+# Product Schemas
+class ProductCreate(BaseModel):
     name: str
-    category: str
+    description: str
     price: float
-    reorder_point: int
+    stock: int
 
-class ProductCreate(ProductBase):
-    pass
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    stock: Optional[int] = None
 
-class Product(ProductBase):
+class ProductResponse(BaseModel):
     id: int
-    
-    class Config:
-        from_attributes = True
-
-class SaleBase(BaseModel):
-    product_id: int
-    quantity: int
-    total_amount: float
-
-class SaleCreate(SaleBase):
-    pass
-
-class Sale(SaleBase):
-    id: int
-    sale_date: datetime
-    
-    class Config:
-        from_attributes = True
-
-class InventoryBase(BaseModel):
-    product_id: int
-    current_stock: int
-
-class Inventory(InventoryBase):
-    id: int
-    last_updated: datetime
-    
-    class Config:
-        from_attributes = True
-
-class DailySalesResponse(BaseModel):
-    dates: List[str]
-    amounts: List[float]
-
-class TopProductResponse(BaseModel):
     name: str
+    description: str
+    price: float
+    stock: int
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+# Order Schemas
+class OrderItemCreate(BaseModel):
+    product_id: int
     quantity: int
-    revenue: float
+
+class OrderCreate(BaseModel):
+    items: List[OrderItemCreate]
+    shipping_address: str
+    phone_number: str
+    notes: Optional[str] = None
+
+class OrderResponse(BaseModel):
+    id: int
+    order_number: str
+    total_amount: float
+    status: str
+    shipping_address: str
+    phone_number: str
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+# Chat Schemas
+class ChatMessageCreate(BaseModel):
+    receiver_id: int
+    message: str
+
+class ChatMessageResponse(BaseModel):
+    id: int
+    sender_id: int
+    receiver_id: int
+    message: str
+    is_read: bool
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True

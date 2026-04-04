@@ -1,57 +1,147 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_BASE_URL = 'http://localhost:8000/api';
 
-export const api = {
-  async getSalesDaily(days = 30) {
-    const response = await fetch(`${API_BASE_URL}/api/sales/daily?days=${days}`);
-    return response.json();
-  },
-  
-  async getTopProducts(limit = 10) {
-    const response = await fetch(`${API_BASE_URL}/api/sales/top-products?limit=${limit}`);
-    return response.json();
-  },
-  
-  async getInventoryStatus() {
-    const response = await fetch(`${API_BASE_URL}/api/inventory/status`);
-    return response.json();
-  },
-  
-  async getForecast() {
-    const response = await fetch(`${API_BASE_URL}/api/forecast/demand`);
-    return response.json();
-  },
-  
-  async reorderProduct(productId, quantity) {
-    const response = await fetch(`${API_BASE_URL}/api/inventory/reorder`, {
+// Auth API calls
+export const authAPI = {
+  register: (email, username, password, full_name) =>
+    fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ product_id: productId, quantity })
-    });
-    return response.json();
-  }
- ,
-async getForecastWithWindow(window = 7) {
-  const response = await fetch(`${API_BASE_URL}/api/forecast/demand?window=${window}`);
-  return response.json();
-},
+      body: JSON.stringify({ email, username, password, full_name })
+    }).then(r => r.json()),
 
-async getProductForecast(productId, days = 30) {
-  const response = await fetch(`${API_BASE_URL}/api/forecast/product-forecast/${productId}?days=${days}`);
-  return response.json();
-},
+  login: (username, password) =>
+    fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    }).then(r => r.json()),
 
-async getReorderSuggestions() {
-  const response = await fetch(`${API_BASE_URL}/api/forecast/reorder-suggestions`);
-  return response.json();
-},
+  getCurrentUser: (token) =>
+    fetch(`${API_BASE_URL}/auth/me`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then(r => r.json())
+};
 
-async getSeasonalPattern() {
-  const response = await fetch(`${API_BASE_URL}/api/forecast/seasonal-pattern`);
-  return response.json();
-},
+// Products API calls
+export const productsAPI = {
+  list: (search = '', skip = 0, limit = 10) =>
+    fetch(`${API_BASE_URL}/products?search=${search}&skip=${skip}&limit=${limit}`)
+      .then(r => r.json()),
 
-async getLowStockItems() {
-  const response = await fetch(`${API_BASE_URL}/api/inventory/low-stock`);
-  return response.json();
-},
+  get: (id) =>
+    fetch(`${API_BASE_URL}/products/${id}`)
+      .then(r => r.json()),
+
+  create: (product, token) =>
+    fetch(`${API_BASE_URL}/products`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(product)
+    }).then(r => r.json()),
+
+  update: (id, product, token) =>
+    fetch(`${API_BASE_URL}/products/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(product)
+    }).then(r => r.json())
+};
+
+// Orders API calls
+export const ordersAPI = {
+  create: (order, token) =>
+    fetch(`${API_BASE_URL}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(order)
+    }).then(r => r.json()),
+
+  list: (token) =>
+    fetch(`${API_BASE_URL}/orders/my-orders`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then(r => r.json()),
+
+  get: (id, token) =>
+    fetch(`${API_BASE_URL}/orders/${id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then(r => r.json())
+};
+
+// Chat API calls
+export const chatAPI = {
+  sendMessage: (message, token) =>
+    fetch(`${API_BASE_URL}/chat/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(message)
+    }).then(r => r.json()),
+
+  getConversations: (token) =>
+    fetch(`${API_BASE_URL}/chat/conversations`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then(r => r.json()),
+
+  getMessages: (userId, token) =>
+    fetch(`${API_BASE_URL}/chat/messages/${userId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then(r => r.json()),
+
+  markAsRead: (messageId, token) =>
+    fetch(`${API_BASE_URL}/chat/messages/${messageId}/read`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then(r => r.json()),
+
+  getUnreadCount: (token) =>
+    fetch(`${API_BASE_URL}/chat/unread-count`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then(r => r.json())
+};
+
+// Sales API calls (existing)
+export const salesAPI = {
+  daily: () =>
+    fetch(`${API_BASE_URL}/sales/daily`)
+      .then(r => r.json()),
+
+  topProducts: () =>
+    fetch(`${API_BASE_URL}/sales/top-products`)
+      .then(r => r.json())
+};
+
+// Inventory API calls (existing)
+export const inventoryAPI = {
+  status: () =>
+    fetch(`${API_BASE_URL}/inventory/status`)
+      .then(r => r.json()),
+
+  reorder: (data) =>
+    fetch(`${API_BASE_URL}/inventory/reorder`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(r => r.json())
+};
+
+// Forecast API calls (existing)
+export const forecastAPI = {
+  demand: () =>
+    fetch(`${API_BASE_URL}/forecast/demand`)
+      .then(r => r.json()),
+
+  reorderSuggestions: () =>
+    fetch(`${API_BASE_URL}/forecast/reorder-suggestions`)
+      .then(r => r.json())
 };

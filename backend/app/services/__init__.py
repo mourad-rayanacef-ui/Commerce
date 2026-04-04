@@ -1,5 +1,5 @@
-from .sales_analytics import SalesAnalytics
-from .inventory_service import InventoryService
-from .forecast_service import DemandForecast
+from .order_service import OrderService
+from .chat_service import ChatService
+from .product_service import ProductService
 
-__all__ = ["SalesAnalytics", "InventoryService", "DemandForecast"]
+__all__ = ['OrderService', 'ChatService', 'ProductService']

@@ -1,40 +1,33 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .database import engine, Base
-from .routes import sales, inventory, forecast , analytics , charts , products
-from .database import SessionLocal
-from . import models
+from app.database import Base, engine
+from app.routes import auth, products, orders, chat, sales, inventory, forecast, analytics, charts
 
 # Create tables
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(title="E-Commerce Dashboard API", version="1.0.0")
 
-# CORS
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Include routers
+app.include_router(auth.router)
+app.include_router(products.router)
+app.include_router(orders.router)
+app.include_router(chat.router)
 app.include_router(sales.router)
 app.include_router(inventory.router)
 app.include_router(forecast.router)
 app.include_router(analytics.router)
 app.include_router(charts.router)
-app.include_router(products.router)
-# Seed data
-@app.on_event("startup")
-def seed_data():
-    db = SessionLocal()
-    if db.query(models.Product).count() == 0:
-        from .utils.data_generator import generate_sample_data
-        generate_sample_data(db)
-    db.close()
 
 @app.get("/")
-def root():
-    return {"message": "Sales & Inventory API"}
+def read_root():
+    return {"message": "E-Commerce Dashboard API", "version": "1.0.0"}
