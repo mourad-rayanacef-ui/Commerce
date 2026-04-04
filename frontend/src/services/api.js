@@ -1,57 +1,159 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_BASE_URL = '/api';
+
+function authHeaders(token) {
+  return token
+    ? { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+    : { 'Content-Type': 'application/json' };
+}
 
 export const api = {
+  // ─── Existing Admin APIs ──────────────────────────────────────────────────
   async getSalesDaily(days = 30) {
-    const response = await fetch(`${API_BASE_URL}/api/sales/daily?days=${days}`);
-    return response.json();
+    const res = await fetch(`${API_BASE_URL}/sales/daily?days=${days}`);
+    return res.json();
   },
-  
   async getTopProducts(limit = 10) {
-    const response = await fetch(`${API_BASE_URL}/api/sales/top-products?limit=${limit}`);
-    return response.json();
+    const res = await fetch(`${API_BASE_URL}/sales/top-products?limit=${limit}`);
+    return res.json();
   },
-  
   async getInventoryStatus() {
-    const response = await fetch(`${API_BASE_URL}/api/inventory/status`);
-    return response.json();
+    const res = await fetch(`${API_BASE_URL}/inventory/status`);
+    return res.json();
   },
-  
   async getForecast() {
-    const response = await fetch(`${API_BASE_URL}/api/forecast/demand`);
-    return response.json();
+    const res = await fetch(`${API_BASE_URL}/forecast/demand`);
+    return res.json();
   },
-  
   async reorderProduct(productId, quantity) {
-    const response = await fetch(`${API_BASE_URL}/api/inventory/reorder`, {
+    const res = await fetch(`${API_BASE_URL}/inventory/reorder`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ product_id: productId, quantity })
+      body: JSON.stringify({ product_id: productId, quantity }),
     });
-    return response.json();
-  }
- ,
-async getForecastWithWindow(window = 7) {
-  const response = await fetch(`${API_BASE_URL}/api/forecast/demand?window=${window}`);
-  return response.json();
-},
+    return res.json();
+  },
+  async getForecastWithWindow(window = 7) {
+    const res = await fetch(`${API_BASE_URL}/forecast/demand?window=${window}`);
+    return res.json();
+  },
+  async getProductForecast(productId, days = 30) {
+    const res = await fetch(`${API_BASE_URL}/forecast/product-forecast/${productId}?days=${days}`);
+    return res.json();
+  },
+  async getReorderSuggestions() {
+    const res = await fetch(`${API_BASE_URL}/forecast/reorder-suggestions`);
+    return res.json();
+  },
+  async getSeasonalPattern() {
+    const res = await fetch(`${API_BASE_URL}/forecast/seasonal-pattern`);
+    return res.json();
+  },
+  async getLowStockItems() {
+    const res = await fetch(`${API_BASE_URL}/inventory/low-stock`);
+    return res.json();
+  },
 
-async getProductForecast(productId, days = 30) {
-  const response = await fetch(`${API_BASE_URL}/api/forecast/product-forecast/${productId}?days=${days}`);
-  return response.json();
-},
+  // ─── Auth ─────────────────────────────────────────────────────────────────
+  async login(username, password) {
+    const res = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ username, password }),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || 'Login failed');
+    return res.json();
+  },
+  async register(data) {
+    const res = await fetch(`${API_BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || 'Registration failed');
+    return res.json();
+  },
+  async getMe(token) {
+    const res = await fetch(`${API_BASE_URL}/auth/me`, { headers: authHeaders(token) });
+    return res.json();
+  },
 
-async getReorderSuggestions() {
-  const response = await fetch(`${API_BASE_URL}/api/forecast/reorder-suggestions`);
-  return response.json();
-},
+  // ─── Products ────────────────────────────────────────────────────────────
+  async getProducts(params = {}) {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetch(`${API_BASE_URL}/products${qs ? '?' + qs : ''}`);
+    return res.json();
+  },
+  async getProduct(id) {
+    const res = await fetch(`${API_BASE_URL}/products/${id}`);
+    return res.json();
+  },
+  async createProduct(data, token) {
+    const res = await fetch(`${API_BASE_URL}/products`, {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || 'Failed');
+    return res.json();
+  },
+  async updateProduct(id, data, token) {
+    const res = await fetch(`${API_BASE_URL}/products/${id}`, {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || 'Failed');
+    return res.json();
+  },
 
-async getSeasonalPattern() {
-  const response = await fetch(`${API_BASE_URL}/api/forecast/seasonal-pattern`);
-  return response.json();
-},
+  // ─── Orders ───────────────────────────────────────────────────────────────
+  async createOrder(data, token) {
+    const res = await fetch(`${API_BASE_URL}/orders`, {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || 'Failed to create order');
+    return res.json();
+  },
+  async getMyOrders(token) {
+    const res = await fetch(`${API_BASE_URL}/orders/my-orders`, { headers: authHeaders(token) });
+    return res.json();
+  },
+  async getOrder(id, token) {
+    const res = await fetch(`${API_BASE_URL}/orders/${id}`, { headers: authHeaders(token) });
+    return res.json();
+  },
+  async getAllOrders(token) {
+    const res = await fetch(`${API_BASE_URL}/orders`, { headers: authHeaders(token) });
+    return res.json();
+  },
+  async updateOrderStatus(id, status, token) {
+    const res = await fetch(`${API_BASE_URL}/orders/${id}/status`, {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || 'Failed');
+    return res.json();
+  },
 
-async getLowStockItems() {
-  const response = await fetch(`${API_BASE_URL}/api/inventory/low-stock`);
-  return response.json();
-},
+  // ─── Chat ─────────────────────────────────────────────────────────────────
+  async sendMessage(data, token) {
+    const res = await fetch(`${API_BASE_URL}/chat/send`, {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Failed to send message');
+    return res.json();
+  },
+  async getConversations(token) {
+    const res = await fetch(`${API_BASE_URL}/chat/conversations`, { headers: authHeaders(token) });
+    return res.json();
+  },
+  async getMessages(userId, token) {
+    const res = await fetch(`${API_BASE_URL}/chat/messages/${userId}`, { headers: authHeaders(token) });
+    return res.json();
+  },
 };

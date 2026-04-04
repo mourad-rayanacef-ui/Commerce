@@ -36,3 +36,5 @@ yarn-error.log*
 
 # Docker
 *.pid
+**/tempobook/**
+node_modules

@@ -1,9 +1,66 @@
-// This file is deprecated - use App.jsx instead
-export { default } from './App.jsx';
+// NOTE: Legacy App.jsx replaced with routing version below
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext.jsx';
+import { Navbar } from './components/Common/Navbar.jsx';
+
+// Pages
+import ProductsPage from './pages/ProductsPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
+import CartPage from './pages/CartPage.jsx';
+import CheckoutPage from './pages/CheckoutPage.jsx';
+import OrderHistoryPage from './pages/OrderHistoryPage.jsx';
+import ChatPage from './pages/ChatPage.jsx';
+import AdminDashboardPage from './pages/AdminDashboardPage.jsx';
+import AdminProductsPage from './pages/AdminProductsPage.jsx';
+import AdminOrdersPage from './pages/AdminOrdersPage.jsx';
+
+// Protected route wrapper
+function ProtectedRoute({ children, adminOnly = false }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div style={{ padding: 60, textAlign: 'center' }}>Loading...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (adminOnly && user.role !== 'admin') return <Navigate to="/" replace />;
+  return children;
+}
+
+function App() {
+  return (
+    <div>
+      <Navbar />
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<ProductsPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        {/* Customer routes */}
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+        <Route path="/orders" element={<ProtectedRoute><OrderHistoryPage /></ProtectedRoute>} />
+        <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+
+        {/* Admin routes */}
+        <Route path="/admin/dashboard" element={<ProtectedRoute adminOnly><AdminDashboardPage /></ProtectedRoute>} />
+        <Route path="/admin/products" element={<ProtectedRoute adminOnly><AdminProductsPage /></ProtectedRoute>} />
+        <Route path="/admin/orders" element={<ProtectedRoute adminOnly><AdminOrdersPage /></ProtectedRoute>} />
+        <Route path="/admin/chat" element={<ProtectedRoute adminOnly><ChatPage /></ProtectedRoute>} />
+
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </div>
+  );
+}
+
+export default App;
 
 /*
-import React, { useState, useEffect } from 'react';
-import ReorderModal from './components/ReorderModal';
+ * ─── LEGACY CODE BELOW (not used) ───
+ */
+// eslint-disable-next-line no-unused-vars
+function _LegacyApp_UNUSED() {
 
 function App() {
   // State variables
@@ -458,4 +515,4 @@ const styles = {
 const styleSheet = document.createElement('style');
 styleSheet.textContent = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
 document.head.appendChild(styleSheet);
-*/
+}
