@@ -8,6 +8,7 @@
     "react-router-dom": "^6.20.1",
     "axios": "^1.6.2"
   },
+  "proxy": "http://localhost:8000",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -34,4 +35,5 @@
   "devDependencies": {
     "react-scripts": "5.0.1"
   }
+  
 }
