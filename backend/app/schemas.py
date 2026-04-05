@@ -3,7 +3,10 @@ from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
 from datetime import datetime
 
+# ─────────────────────────────────────────────
 # Authentication Schemas
+# ─────────────────────────────────────────────
+
 class UserCreate(BaseModel):
     email: str
     username: str
@@ -23,7 +26,7 @@ class UserResponse(BaseModel):
     is_active: bool
     avatar_url: Optional[str] = None
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 
@@ -32,7 +35,11 @@ class UserResponse(BaseModel):
     def empty_avatar_to_none(cls, v):
         return None if v == "" else v
 
+
+# ─────────────────────────────────────────────
 # Product Schemas
+# ─────────────────────────────────────────────
+
 class ProductCreate(BaseModel):
     name: str
     description: str
@@ -91,7 +98,7 @@ class ProductResponse(BaseModel):
     stock: int
     image_url: Optional[str] = None
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 
@@ -100,10 +107,15 @@ class ProductResponse(BaseModel):
     def empty_product_image_to_none(cls, v):
         return None if v == "" else v
 
+
+# ─────────────────────────────────────────────
 # Order Schemas
+# ─────────────────────────────────────────────
+
 class OrderItemCreate(BaseModel):
     product_id: int
     quantity: int
+
 
 class OrderCreate(BaseModel):
     items: List[OrderItemCreate]
@@ -137,6 +149,7 @@ class OrderResponse(BaseModel):
     status: str
     shipping_address: str
     phone_number: str
+    notes: Optional[str] = None
     created_at: datetime
     image_urls: List[str] = Field(default_factory=list)
 
@@ -188,10 +201,27 @@ class OrderAdminDetailResponse(OrderAdminResponse):
         from_attributes = True
 
 
+# ── THIS WAS MISSING — fixes the 404 / status update not saving ──
+class OrderStatusUpdate(BaseModel):
+    status: str
+
+    @field_validator("status")
+    @classmethod
+    def validate_status(cls, v: str) -> str:
+        allowed = {"pending", "paid", "processing", "shipped", "completed", "cancelled"}
+        if v not in allowed:
+            raise ValueError(f"Invalid status '{v}'. Must be one of: {', '.join(sorted(allowed))}")
+        return v
+
+
+# ─────────────────────────────────────────────
 # Chat Schemas
+# ─────────────────────────────────────────────
+
 class ChatMessageCreate(BaseModel):
     receiver_id: int
     message: str
+
 
 class ChatMessageResponse(BaseModel):
     id: int
@@ -200,7 +230,7 @@ class ChatMessageResponse(BaseModel):
     message: str
     is_read: bool
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 
