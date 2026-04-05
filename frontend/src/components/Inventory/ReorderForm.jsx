@@ -121,11 +121,23 @@ export const ReorderForm = ({ product, onReorderComplete, onCancel }) => {
           <div className="form-group">
             <label>Estimated Cost:</label>
             <div className="cost-estimate">
-              {product.price && quantity && (
-                <span>${(product.price * quantity).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              )}
-              {(!product.price || !quantity) && <span>—</span>}
+              {(() => {
+                const unit = Number(product.price);
+                const qty = Number(quantity);
+                const ok = !Number.isNaN(unit) && !Number.isNaN(qty) && qty > 0;
+                return ok ? (
+                  <span>
+                    ${(unit * qty).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                ) : (
+                  <span>—</span>
+                );
+              })()}
             </div>
+            <small className="cost-estimate-hint">Uses catalog unit price × quantity</small>
           </div>
 
           {error && <div className="error-message">{error}</div>}

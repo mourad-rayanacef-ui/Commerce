@@ -15,7 +15,7 @@ const LoginPage = () => {
     e.preventDefault();
     const result = await login(username, password);
     if (result.success) {
-      navigate('/');
+      navigate(result.user?.role === 'admin' ? '/admin/dashboard' : '/');
     } else {
       setError(result.error);
     }
@@ -46,6 +46,15 @@ const LoginPage = () => {
           </button>
         </form>
         <p>Don't have an account? <Link to="/register">Register here</Link></p>
+
+        <aside className="auth-admin-hint">
+          <strong>Admin login</strong>
+          <p>
+            Use an account whose <code>role</code> is <code>admin</code> in the database, or set the
+            backend env <code>ADMIN_BOOTSTRAP_USERNAME</code> to your username and restart the API once
+            to promote that user. Then sign in here — you’ll land on the admin dashboard.
+          </p>
+        </aside>
       </div>
     </div>
   );

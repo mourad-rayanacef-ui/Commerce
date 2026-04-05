@@ -1,0 +1,327 @@
+.admin-products-banner {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.admin-products-banner--err {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.admin-products-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 400px) 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .admin-products-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-products-panel {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.admin-products-panel--form {
+  background: linear-gradient(180deg, #fafbfc 0%, #ffffff 120px);
+}
+
+.admin-products-panel--table {
+  min-height: 200px;
+}
+
+.admin-products-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.admin-products-panel-head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #0f172a;
+}
+
+.admin-products-text-btn {
+  background: none;
+  border: none;
+  color: #6366f1;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.admin-products-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-products-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.admin-products-form input,
+.admin-products-form textarea {
+  padding: 0.55rem 0.65rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.admin-products-form input:focus,
+.admin-products-form textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.admin-products-image-field {
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+  background: #f8fafc;
+  margin-bottom: 0.25rem;
+}
+
+.admin-products-image-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 0.65rem;
+}
+
+.admin-products-image-preview-wrap {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  margin-bottom: 0.75rem;
+}
+
+.admin-products-image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-products-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  background: linear-gradient(145deg, #e2e8f0, #f1f5f9);
+}
+
+.admin-products-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.admin-products-image-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.admin-products-image-btn {
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+}
+
+.admin-products-image-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.admin-products-image-btn--ghost {
+  background: #fff;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+.admin-products-image-hint {
+  margin: 0.65rem 0 0;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.admin-products-col-thumb {
+  width: 56px;
+  padding-left: 0.65rem !important;
+  padding-right: 0.35rem !important;
+}
+
+.admin-products-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-products-thumb--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #818cf8, #a78bfa);
+  border: none;
+}
+
+.admin-products-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.admin-products-submit {
+  margin-top: 0.25rem;
+  padding: 0.65rem 1rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.admin-products-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-products-search {
+  padding: 0.45rem 0.65rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  min-width: 180px;
+  font-size: 0.9rem;
+}
+
+.admin-products-muted {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.admin-products-table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-products-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background: #fff;
+}
+
+.admin-products-table th {
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-products-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: top;
+  color: #334155;
+}
+
+.admin-products-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.admin-products-desc {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 0.2rem;
+  max-width: 320px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.admin-products-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+.admin-products-actions button {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  cursor: pointer;
+  color: #334155;
+}
+
+.admin-products-actions button:hover {
+  background: #f8fafc;
+}
+
+.admin-products-actions button.danger {
+  border-color: #fecaca;
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.admin-products-actions button.danger:hover {
+  background: #fee2e2;
+}

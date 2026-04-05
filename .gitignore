@@ -13,6 +13,9 @@ ENV/
 *.sqlite
 *.db
 
+# Uploaded images (local fallback when Cloudinary is not configured)
+backend/app/media/
+
 # Frontend
 node_modules/
 /build

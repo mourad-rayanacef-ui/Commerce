@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = '/api';
 
 // Auth API calls
 export const authAPI = {
@@ -51,6 +51,30 @@ export const productsAPI = {
       },
       body: JSON.stringify(product)
     }).then(r => r.json())
+};
+
+// Image uploads (multipart — do not set Content-Type; browser sets boundary)
+export const uploadsAPI = {
+  uploadImage: async (file, token) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch(`${API_BASE_URL}/uploads/image`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: fd,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const msg =
+        typeof data.detail === 'string'
+          ? data.detail
+          : Array.isArray(data.detail)
+            ? data.detail.map((d) => d.msg || JSON.stringify(d)).join(', ')
+            : 'Upload failed';
+      throw new Error(msg);
+    }
+    return data.url;
+  },
 };
 
 // Orders API calls
@@ -141,14 +165,49 @@ export const forecastAPI = {
     fetch(`${API_BASE_URL}/forecast/demand`)
       .then(r => r.json())
 };
+const getSalesDaily = (days = 30) =>
+  fetch(`/api/sales/daily?days=${days}`).then((r) => r.json());
+
+const getTopProducts = (limit = 10) =>
+  fetch(`/api/sales/top-products?limit=${limit}`).then((r) => r.json());
+
+const getInventoryStatus = () =>
+  fetch('/api/inventory/status').then((r) => r.json());
+
+const getLowStockItems = () =>
+  getInventoryStatus().then((list) =>
+    Array.isArray(list)
+      ? list.filter((i) => i.status === 'Critical' || i.status === 'Low')
+      : []
+  );
+
+const reorderProduct = async (product_id, quantity) => {
+  const res = await fetch(`${API_BASE_URL}/inventory/reorder`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ product_id, quantity }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(typeof data.detail === 'string' ? data.detail : 'Reorder failed');
+  }
+  return data;
+};
+
 const api = {
   authAPI,
   productsAPI,
   ordersAPI,
+  uploadsAPI,
   chatAPI,
   salesAPI,
   inventoryAPI,
-  forecastAPI
+  forecastAPI,
+  getSalesDaily,
+  getTopProducts,
+  getInventoryStatus,
+  getLowStockItems,
+  reorderProduct,
 };
 
 export default api;

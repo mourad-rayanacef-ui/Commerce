@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import ChatMessage, User
-from app.schemas import ChatMessageCreate, ChatMessageResponse
+from app.routes.auth import get_current_active_user
+from app.schemas import ChatMessageCreate, ChatMessageResponse, ChatContactResponse
 from typing import List
 from datetime import datetime
 
@@ -12,9 +13,10 @@ router = APIRouter(prefix="/api/chat", tags=["chat"])
 @router.post("/send", response_model=ChatMessageResponse)
 def send_message(
     message: ChatMessageCreate,
-    sender_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
 ):
+    sender_id = current_user.id
     """
     Send a message from sender_id to receiver_id
     """
@@ -36,7 +38,11 @@ def send_message(
 
 # Get all conversations for a user
 @router.get("/conversations")
-def get_conversations(user_id: int, db: Session = Depends(get_db)):
+def get_conversations(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    user_id = current_user.id
     """
     Get list of all conversations for a user with latest message info
     """
@@ -74,15 +80,37 @@ def get_conversations(user_id: int, db: Session = Depends(get_db)):
     return list(conversations.values())
 
 
+@router.get("/contacts", response_model=List[ChatContactResponse])
+def get_chat_contacts(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Users you can start a conversation with.
+    Customers see admins (support). Admins see all other accounts.
+    """
+    if current_user.role == "admin":
+        others = (
+            db.query(User)
+            .filter(User.id != current_user.id)
+            .order_by(User.username)
+            .all()
+        )
+    else:
+        others = db.query(User).filter(User.role == "admin").order_by(User.username).all()
+    return others
+
+
 # Get all messages between two users
 @router.get("/messages/{other_user_id}", response_model=List[ChatMessageResponse])
 def get_messages(
-    user_id: int,
     other_user_id: int,
     skip: int = Query(0),
     limit: int = Query(50),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
 ):
+    user_id = current_user.id
     """
     Get conversation history between user_id and other_user_id
     """
@@ -122,7 +150,11 @@ def mark_as_read(message_id: int, db: Session = Depends(get_db)):
 
 # Get unread message count
 @router.get("/unread-count")
-def get_unread_count(user_id: int, db: Session = Depends(get_db)):
+def get_unread_count(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    user_id = current_user.id
     """
     Get total unread message count for user
     """
@@ -137,10 +169,11 @@ def get_unread_count(user_id: int, db: Session = Depends(get_db)):
 # Get unread messages from specific user
 @router.get("/unread/{other_user_id}")
 def get_unread_from_user(
-    user_id: int,
     other_user_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
 ):
+    user_id = current_user.id
     """
     Get count of unread messages from a specific user
     """
@@ -155,7 +188,12 @@ def get_unread_from_user(
 
 # Delete a message
 @router.delete("/messages/{message_id}")
-def delete_message(message_id: int, user_id: int, db: Session = Depends(get_db)):
+def delete_message(
+    message_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    user_id = current_user.id
     """
     Delete a message (only if user is sender)
     """

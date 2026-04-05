@@ -13,16 +13,16 @@ export const SalesChart = () => {
   }, []);
   
   if (loading) return <div>Loading chart...</div>;
-  
-  // Simple bar chart using inline SVG (or use Chart.js/recharts)
-  const maxAmount = Math.max(...data.amounts);
+
+  const amounts = Array.isArray(data.amounts) ? data.amounts : [];
+  const maxAmount = Math.max(...amounts, 1);
   const barWidth = 30;
   
   return (
     <div className="sales-chart">
       <h3>Daily Sales (Last 30 Days)</h3>
-      <svg width={data.dates.length * barWidth} height={400}>
-        {data.amounts.map((amount, idx) => (
+      <svg width={Math.max((data.dates?.length || 0) * barWidth, 120)} height={400}>
+        {amounts.map((amount, idx) => (
           <rect
             key={idx}
             x={idx * barWidth}

@@ -1,16 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
+import AdminShell from '../components/Admin/AdminShell';
+import { InventoryTable } from '../components/Inventory/InventoryTable';
+import { LowStockAlert } from '../components/Inventory/LowStockAlert';
 
 const InventoryPage = () => {
-  const { user, token } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
 
   return (
-    <div className="inventory-page">
-      <h1>Inventory Management</h1>
-      <p>Welcome, {user?.username}!</p>
-      {/* Add inventory content here */}
-    </div>
+    <AdminShell
+      title="Inventory"
+      subtitle={`Stock levels and reorder workflow. Hello, ${user?.username}.`}
+    >
+      <div className="admin-inventory-inner">
+        <LowStockAlert />
+        <div style={{ marginTop: '1.25rem' }}>
+          <InventoryTable />
+        </div>
+      </div>
+    </AdminShell>
   );
 };
 

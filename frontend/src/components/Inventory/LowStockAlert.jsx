@@ -22,8 +22,9 @@ export const LowStockAlert = () => {
       <ul>
         {lowStockItems.map((item, idx) => (
           <li key={idx}>
-            <strong>{item.product}</strong>: {item.current_stock} units left 
-            (Reorder at {item.reorder_point}) - Order {item.units_to_order} units
+            <strong>{item.product_name || item.product}</strong>: {item.current_stock} units
+            (reorder point {item.reorder_point})
+            {item.units_to_order != null ? ` — suggest reorder ${item.units_to_order}` : ''}
           </li>
         ))}
       </ul>

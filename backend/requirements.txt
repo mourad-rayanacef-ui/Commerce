@@ -11,3 +11,5 @@ PyJWT==2.12.1
 pydantic==2.5.0
 pydantic-settings==2.1.0
 python-dotenv==1.0.0
+cloudinary==1.41.0
+werkzeug==3.0.1

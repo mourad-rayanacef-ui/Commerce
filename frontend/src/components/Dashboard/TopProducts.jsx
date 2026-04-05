@@ -6,8 +6,8 @@ export const TopProducts = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.getTopProducts(5).then(data => {
-      setProducts(data);
+    api.getTopProducts(5).then((data) => {
+      setProducts(Array.isArray(data) ? data : []);
       setLoading(false);
     });
   }, []);
@@ -30,7 +30,9 @@ export const TopProducts = () => {
             <tr key={idx}>
               <td>{product.name}</td>
               <td>{product.quantity}</td>
-              <td>${product.revenue.toFixed(2)}</td>
+              <td>
+                ${product.revenue != null ? Number(product.revenue).toFixed(2) : '—'}
+              </td>
             </tr>
           ))}
         </tbody>

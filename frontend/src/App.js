@@ -13,6 +13,9 @@ import ProductsPage from './pages/ProductsPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
+import AdminProductsPage from './pages/AdminProductsPage';
+import AdminOrdersPage from './pages/AdminOrdersPage';
+import ProfilePage from './pages/ProfilePage';
 
 // Components
 import Navbar from './components/Common/Navbar';
@@ -20,14 +23,23 @@ import ChatWindow from './components/Chat/ChatWindow';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole = null }) => {
-  const { user, token } = useContext(AuthContext);
+  const { user, token, authReady } = useContext(AuthContext);
+
+  if (!authReady) {
+    return (
+      <div className="route-auth-loading" role="status" aria-live="polite">
+        <div className="route-auth-loading-spinner" />
+        <span>Checking your session…</span>
+      </div>
+    );
+  }
 
   if (!token || !user) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
   if (requiredRole && user.role !== requiredRole) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
@@ -72,6 +84,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Admin Routes */}
         <Route
@@ -79,6 +99,22 @@ function App() {
           element={
             <ProtectedRoute requiredRole="admin">
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminOrdersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/products"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminProductsPage />
             </ProtectedRoute>
           }
         />

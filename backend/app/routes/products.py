@@ -2,8 +2,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models import Product
+from app.models import Product, User
 from app.schemas import ProductCreate, ProductUpdate, ProductResponse
+from app.routes.auth import require_admin
 from typing import List
 
 router = APIRouter(prefix="/api/products", tags=["products"])
@@ -28,7 +29,11 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     return product
 
 @router.post("", response_model=ProductResponse)
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+def create_product(
+    product: ProductCreate,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+):
     new_product = Product(**product.dict())
     db.add(new_product)
     db.commit()
@@ -36,7 +41,12 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     return new_product
 
 @router.put("/{product_id}", response_model=ProductResponse)
-def update_product(product_id: int, product: ProductUpdate, db: Session = Depends(get_db)):
+def update_product(
+    product_id: int,
+    product: ProductUpdate,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+):
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -49,3 +59,17 @@ def update_product(product_id: int, product: ProductUpdate, db: Session = Depend
     db.commit()
     db.refresh(db_product)
     return db_product
+
+
+@router.delete("/{product_id}")
+def delete_product(
+    product_id: int,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin),
+):
+    db_product = db.query(Product).filter(Product.id == product_id).first()
+    if not db_product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    db.delete(db_product)
+    db.commit()
+    return {"ok": True, "id": product_id}

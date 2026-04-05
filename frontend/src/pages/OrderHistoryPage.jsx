@@ -1,51 +1,119 @@
-// frontend/src/pages/OrderHistoryPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import '../styles/orders.css';
+
+const statusLabel = (s) => (s ? s.replace(/_/g, ' ') : 'pending');
 
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { token } = useContext(AuthContext);
+  const location = useLocation();
+  const justPlaced = location.state?.orderPlaced;
 
   useEffect(() => {
+    if (!token) {
+      setLoading(false);
+      setOrders([]);
+      return;
+    }
     fetchOrders();
-  }, []);
+  }, [token]);
 
   const fetchOrders = async () => {
     try {
       const response = await fetch('/api/orders/my-orders', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
-      setOrders(data);
+      setOrders(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching orders:', error);
+      setOrders([]);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div className="loading">Loading orders...</div>;
+  if (loading) {
+    return (
+      <div className="orders-page">
+        <div className="orders-loading">
+          <div className="orders-spinner" aria-hidden />
+          <p>Loading your orders…</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="orders-page">
-      <h1>Order History</h1>
+      <header className="orders-hero">
+        <div>
+          <h1>Order history</h1>
+          <p className="orders-hero-sub">Track shipments and totals in one place.</p>
+        </div>
+        <Link to="/" className="orders-shop-link">
+          Continue shopping →
+        </Link>
+      </header>
+
+      {justPlaced && (
+        <div className="orders-success-banner" role="status">
+          Order placed successfully — thank you! It should appear in the list below.
+        </div>
+      )}
+
       {orders.length === 0 ? (
-        <p>No orders yet</p>
+        <div className="orders-empty">
+          <p>You have not placed any orders yet.</p>
+          <Link to="/" className="orders-cta">
+            Browse products
+          </Link>
+        </div>
       ) : (
         <div className="orders-list">
-          {orders.map(order => (
-            <div key={order.id} className="order-card">
+          {orders.map((order) => (
+            <article key={order.id} className="order-card">
               <div className="order-header">
-                <h3>Order #{order.order_number}</h3>
-                <span className={`status ${order.status}`}>{order.status}</span>
+                <div>
+                  <h3 className="order-number">{order.order_number}</h3>
+                  <time className="order-date" dateTime={order.created_at}>
+                    {new Date(order.created_at).toLocaleString()}
+                  </time>
+                </div>
+                <span className={`status-pill status-${(order.status || 'pending').toLowerCase()}`}>
+                  {statusLabel(order.status)}
+                </span>
               </div>
-              <p><strong>Total:</strong> ${order.total_amount}</p>
-              <p><strong>Shipping:</strong> {order.shipping_address}</p>
-              <p><strong>Phone:</strong> {order.phone_number}</p>
-              <p><strong>Date:</strong> {new Date(order.created_at).toLocaleDateString()}</p>
-            </div>
+              <dl className="order-meta">
+                <div>
+                  <dt>Total</dt>
+                  <dd>${Number(order.total_amount).toFixed(2)}</dd>
+                </div>
+                <div>
+                  <dt>Ship to</dt>
+                  <dd>{order.shipping_address}</dd>
+                </div>
+                <div>
+                  <dt>Phone</dt>
+                  <dd>{order.phone_number}</dd>
+                </div>
+              </dl>
+              {Array.isArray(order.image_urls) && order.image_urls.length > 0 && (
+                <div className="order-attachments">
+                  <h4 className="order-attachments-title">Photos</h4>
+                  <div className="order-attachments-grid">
+                    {order.image_urls.map((src, i) => (
+                      <a key={`${order.id}-img-${i}`} href={src} target="_blank" rel="noopener noreferrer">
+                        <img src={src} alt="" className="order-attachment-thumb" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </article>
           ))}
         </div>
       )}

@@ -19,14 +19,15 @@ export const KPICards = () => {
           api.getLowStockItems()
         ]);
         
-        const totalRevenue = sales.amounts.reduce((a, b) => a + b, 0);
-        const totalSales = sales.amounts.length;
-        
+        const amounts = Array.isArray(sales?.amounts) ? sales.amounts : [];
+        const totalRevenue = amounts.reduce((a, b) => a + b, 0);
+        const totalSales = Math.max(amounts.length, 1);
+
         setKpis({
           totalRevenue: totalRevenue.toFixed(2),
-          totalSales: totalSales,
+          totalSales: amounts.length,
           avgOrderValue: (totalRevenue / totalSales).toFixed(2),
-          lowStockCount: lowStock.length
+          lowStockCount: Array.isArray(lowStock) ? lowStock.length : 0,
         });
       } catch (error) {
         console.error('Error fetching KPIs:', error);

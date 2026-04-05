@@ -1,3 +1,29 @@
+.route-auth-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 50vh;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.route-auth-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: route-auth-spin 0.75s linear infinite;
+}
+
+@keyframes route-auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -443,6 +469,14 @@ button:hover, .btn-primary:hover {
   font-size: 1.2rem;
   font-weight: bold;
   color: #27ae60;
+}
+
+.cost-estimate-hint {
+  display: block;
+  margin-top: 6px;
+  color: #7f8c8d;
+  font-weight: normal;
+  font-size: 0.8rem;
 }
 
 .form-actions {

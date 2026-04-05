@@ -1,6 +1,7 @@
 # backend/app/models.py
 from app.database import Base
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
@@ -12,6 +13,7 @@ class Product(Base):
     description = Column(String)
     price = Column(Float)
     stock = Column(Integer)
+    image_url = Column(String(2048), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     
     orders = relationship("OrderItem", back_populates="product")
@@ -24,6 +26,7 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     full_name = Column(String)
+    avatar_url = Column(String(2048), nullable=True)
     role = Column(String, default="customer")  # 'admin' or 'customer'
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -43,6 +46,7 @@ class Order(Base):
     shipping_address = Column(Text)
     phone_number = Column(String)
     notes = Column(Text, nullable=True)
+    image_urls = Column(JSONB, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     
     user = relationship("User", back_populates="orders")
